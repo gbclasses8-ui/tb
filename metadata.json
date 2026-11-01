@@ -1,0 +1,8 @@
+{
+  "name": "GB STUDY",
+  "description": "GB STUDY - Premier Online Learning Platform. Class 9th, 10th, 11th, 12th complete syllabus, video lectures, live classes, daily notes aur study PDFs.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
