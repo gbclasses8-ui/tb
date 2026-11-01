@@ -1,90 +1,69 @@
-<!doctype html>
-<html lang="en" class="dark">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>GB STUDY – Online Learning Platform | Class 9th, 10th, 11th & 12th</title>
-    <meta name="description" content="GB STUDY - Premier Online Learning Platform. Class 9th, 10th, 11th, 12th complete syllabus, video lectures, live classes, daily notes aur study PDFs." />
-    <meta name="keywords" content="GB STUDY, GB STUDY official, GB STUDY app, GB STUDY class 10, GB STUDY class 12, Bihar board online classes, GB STUDY notes, GB STUDY batch, GB STUDY video lectures, GB STUDY PDF notes" />
-    <meta name="author" content="GB STUDY" />
-    <meta name="publisher" content="GB STUDY" />
-    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-    <meta name="theme-color" content="#f59e0b" />
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
-    
-    <!-- OpenGraph Social Cards -->
-    <meta property="og:site_name" content="GB STUDY" />
-    <meta property="og:title" content="GB STUDY – Online Learning Platform" />
-    <meta property="og:description" content="GB STUDY - Premier Online Learning Platform. Class 9th, 10th, 11th, 12th complete syllabus, video lectures, and study PDFs." />
-    <meta property="og:type" content="website" />
-    <meta property="og:locale" content="hi_IN" />
-    <meta property="og:image" content="/logo.png" />
-    <meta property="og:image:alt" content="GB STUDY Logo" />
-    
-    <!-- Twitter Social Cards -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="GB STUDY – Online Learning Platform" />
-    <meta name="twitter:description" content="GB STUDY - Premier Online Learning Platform. Class 9th, 10th, 11th, 12th complete syllabus, video lectures, and study PDFs." />
-    <meta name="twitter:image" content="/logo.png" />
-    
-    <!-- Schema.org Structured Data (JSON-LD) -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "WebSite",
-          "name": "GB STUDY",
-          "alternateName": ["GB STUDY Official", "GB STUDY Education", "GB STUDY Live"],
-          "description": "Premier Online Learning Platform for Class 9th, 10th, 11th & 12th board preparation",
-          "inLanguage": ["hi", "en"]
-        },
-        {
-          "@type": "EducationalOrganization",
-          "name": "GB STUDY",
-          "alternateName": "GB STUDY Platform",
-          "logo": "/logo.png",
-          "description": "Leading online education platform for Matric and Intermediate board examination preparation."
-        },
-        {
-          "@type": "WebApplication",
-          "name": "GB STUDY Learning Portal",
-          "applicationCategory": "EducationalApplication",
-          "operatingSystem": "All",
-          "browserRequirements": "Requires JavaScript. Requires HTML5.",
-          "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "INR"
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CloudFront Signed HLS Player</title>
+<style>
+  body { margin: 0; background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; }
+  video { width: 80vw; height: auto; background: #000; }
+</style>
+</head>
+<body>
+
+<video id="video" controls></video>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script>
+  const video = document.getElementById('video');
+
+  // Your signed master playlist URL with query params (Signature, Policy, Key-Pair-Id)
+  const masterPlaylistURL = "https://d1xfuppq3g677h.cloudfront.net/index.m3u8?Signature=wbtzYSqt4QNjHHoR18gPxR6gY6fDCoEJxGsLqQ4UGG8dmx8-7X1QclqVjNzc-hkQ2pbhutUYYf2KCMOGl2RXRfh7Ga9bEfls1EKL8XXE67etUdA6QTy0joMalhQZdxICw2VO0RD02UvuKWlQir1~Pewe0~YfBLzPfI22SN6e3nYxEa4g1XqszlhjNFc7tvjuak6OU~l1TMieaLoP0EVDVbHGTLamBtLTEfWA1R4tBEPEHmNP43RgnfbN~otenKxFK0zqfoFFlJTg8i1FM2PIovTgZD1NTuB2-rhnPPPZgFWcbXOc-Ki2XW53jxMNCButkHrEmvMn5AiTepL2NlOsqQ__&Key-Pair-Id=APKAXVKMENFCRKTG5XE2&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9kMXhmdXBwcTNnNjc3aC5jbG91ZGZyb250Lm5ldC8qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzUyMzA5MzEzfX19XX0_";
+
+  // Parse the signature parameters from the master playlist URL to reuse for segment requests
+  const urlObj = new URL(masterPlaylistURL);
+  const signature = urlObj.searchParams.get('Signature');
+  const keyPairId = urlObj.searchParams.get('Key-Pair-Id');
+  const policy = urlObj.searchParams.get('Policy');
+
+  if (Hls.isSupported()) {
+    const hls = new Hls({
+      // Intercept all XHR requests to append signature query params
+      xhrSetup: function(xhr, url) {
+        try {
+          const reqUrl = new URL(url);
+          // Append the CloudFront signed parameters if not present
+          if (!reqUrl.searchParams.has('Signature')) {
+            reqUrl.searchParams.set('Signature', signature);
           }
+          if (!reqUrl.searchParams.has('Key-Pair-Id')) {
+            reqUrl.searchParams.set('Key-Pair-Id', keyPairId);
+          }
+          if (!reqUrl.searchParams.has('Policy')) {
+            reqUrl.searchParams.set('Policy', policy);
+          }
+          xhr.open('GET', reqUrl.toString(), true);
+        } catch (e) {
+          // fallback if URL parsing fails
+          xhr.open('GET', url, true);
         }
-      ]
-    }
-    </script>
-    
-    <link rel="icon" href="/logo.png" type="image/png" />
-    <link rel="apple-touch-icon" href="/logo.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Shaka Player for DASH/MPD playback -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.compiled.js"></script>
-    <!-- HLS.js for .m3u8 streaming -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.8/hls.min.js"></script>
-    <!-- PDF.js for canvas PDF rendering -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script>
-      if (window.pdfjsLib) {
-        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
       }
-    </script>
-    <link rel="stylesheet" href="/assets/gbstudy.css" />
-  </head>
-  <body class="bg-[#0a0a0a] text-[#f8fafc] font-sans antialiased min-h-screen selection:bg-amber-500 selection:text-black select-none">
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+    });
+    hls.loadSource(masterPlaylistURL);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, function() {
+      video.play();
+    });
+  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    // Native HLS support (Safari, iOS)
+    video.src = masterPlaylistURL;
+    video.addEventListener('loadedmetadata', function() {
+      video.play();
+    });
+  } else {
+    console.error('HLS not supported in this browser');
+  }
+</script>
+
+</body>
 </html>
